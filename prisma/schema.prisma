@@ -14,8 +14,56 @@ datasource db {
 }
 
 model User {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  username  String    @unique
+  password  String
+  Product   Product[]
+}
+
+model Product {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  username  String   @unique
-  password  String
+
+  name        String @db.VarChar(255)
+  belongsToId String
+
+  belongsTo User     @relation(fields: [belongsToId], references: [id])
+  Update    Update[]
+
+  @@unique([id, belongsToId])
+}
+
+enum UPDATE_STATUS {
+  IN_PROGRESS
+  SHIPPED
+  DEPRECATED
+}
+
+model Update {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title   String
+  body    String
+  status  UPDATE_STATUS @default(IN_PROGRESS)
+  version String?
+  asset   String?
+
+  productId   String
+  product     Product       @relation(fields: [productId], references: [id])
+  UpdatePoint UpdatePoint[]
+}
+
+model UpdatePoint {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String @db.VarChar(255)
+  description String
+
+  updateId String
+  update   Update @relation(fields: [updateId], references: [id])
 }
