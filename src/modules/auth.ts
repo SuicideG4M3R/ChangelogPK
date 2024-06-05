@@ -29,7 +29,7 @@ export const protect = (req, res, next) => {
         return res.status(401).json({message: 'Invalid token'})
     }
     try {
-        req.user = jwt.verify(token, process.env.JWT_SECRET)
+        req.user = jwt.verify(token, process.env.JWT_SECRET) // ADDS TOKEN TO THE USER
         next()
     } catch (error) {
         console.error(error)
